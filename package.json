@@ -6,7 +6,7 @@
     "dependencies": {
         "de.dontknow.dontbehumble": "0.9.0-https://github.com/DarkMorninG/DontBeHumble.git",
         "de.dontknow.vault": "1.0.0-https://github.com/DarkMorninG/Vault.git",
-        "jillejr.newtonsoft.json-for-unity.converters": "1.6.3-https://github.com/jilleJr/Newtonsoft.Json-for-Unity.Converters.git#1.6.3",
+        "jillejr.newtonsoft.json-for-unity.converters": "1.6.3-jilleJr+Newtonsoft.Json-for-Unity.Converters.git",
         "com.unity.nuget.newtonsoft-json": "3.2.1"
     }
 }

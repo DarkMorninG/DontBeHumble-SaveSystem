@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using DBH.Attributes;
 using DBH.Base;
+using DBH.SaveSystem.Beans;
 using DBH.SaveSystem.dto;
 using DBH.SaveSystem.writer;
 using Sirenix.OdinInspector;

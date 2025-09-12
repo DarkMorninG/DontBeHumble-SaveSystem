@@ -2,7 +2,7 @@ using System;
 using DBH.Attributes;
 using Application = UnityEngine.Application;
 
-namespace DBH.SaveSystem {
+namespace DBH.SaveSystem.Beans {
     [Bean]
     public class GameplayTimer {
 

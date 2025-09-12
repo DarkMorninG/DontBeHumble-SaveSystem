@@ -7,7 +7,7 @@ using DBH.SaveSystem.dto;
 using UnityEngine;
 using Vault;
 
-namespace DBH.SaveSystem {
+namespace DBH.SaveSystem.Beans {
     [Bean]
     public class SaveGameGenerator {
         public void Update(SaveGame saveGame, string stateName, List<string> phases, string currentScene) {

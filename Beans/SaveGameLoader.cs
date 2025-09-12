@@ -15,7 +15,7 @@ using UnityEngine;
 using Vault;
 using Object = UnityEngine.Object;
 
-namespace DBH.SaveSystem {
+namespace DBH.SaveSystem.Beans {
     [Bean]
     public class SaveGameLoader {
         public void LoadSaveGame(SaveGame saveGame) {

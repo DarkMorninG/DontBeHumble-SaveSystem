@@ -1,5 +1,5 @@
 {
-    "name": "SaveSystem",
+    "name": "DontBeHumble.SaveSystem",
     "rootNamespace": "DBH.SaveSystem",
     "references": [
         "GUID:dcc8bc53dd4945e1b7af1af5066d71cf",

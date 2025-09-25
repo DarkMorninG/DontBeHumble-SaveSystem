@@ -20,7 +20,8 @@ namespace DBH.SaveSystem.writer {
             var fixedUnityTypeContractResolver = new FixedUnityTypeContractResolver();
             var jsonSerializerSettings = new JsonSerializerSettings {
                 Converters = { new ScriptableObjectJsonConverter(), new DecimalJsonConverter() },
-                ContractResolver = fixedUnityTypeContractResolver
+                ContractResolver = fixedUnityTypeContractResolver,
+                TypeNameHandling = TypeNameHandling.All
             };
             var saveGameString = JsonConvert.SerializeObject(saveGame, Formatting.Indented, jsonSerializerSettings);
             await File.WriteAllTextAsync(SaveGameFile(saveGame.Order), saveGameString);

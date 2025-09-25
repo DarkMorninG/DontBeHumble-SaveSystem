@@ -16,6 +16,7 @@ namespace DBH.SaveSystem.dto {
         [SerializeField]
         private Type type;
 
+        [SerializeField]
         public List<SceneProperty> sceneProperties = new List<SceneProperty>();
 
         public Type Type {
@@ -44,8 +45,10 @@ namespace DBH.SaveSystem.dto {
 
         [Serializable]
         public class SceneProperty {
-            public readonly string PropertyName;
-            public readonly object value;
+            [SerializeField]
+            public string PropertyName;
+            [SerializeField]
+            public object value;
 
             public SceneProperty(string propertyName, object value) {
                 PropertyName = propertyName;

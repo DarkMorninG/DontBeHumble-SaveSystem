@@ -10,6 +10,7 @@ using DBH.SaveSystem.dto;
 using DBH.SaveSystem.json;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using Newtonsoft.Json.UnityConverters;
 using Sirenix.Utilities;
 using UnityEngine;
 using Vault;
@@ -28,7 +29,7 @@ namespace DBH.SaveSystem.Beans {
             var saveAblePositionGameobjects = GameObject.FindGameObjectsWithTag("SaveAblePosition");
             UpdatePositions(saveGame.ActiveSceneSave(), saveAblePositionGameobjects.ToList());
         }
-        
+
 
         private void UpdateProperties(SaveGame saveGame, List<ISaveable> saveAbles) {
             var sceneSave = saveGame.ActiveSceneSave();
@@ -61,7 +62,8 @@ namespace DBH.SaveSystem.Beans {
                             }
                         } else {
                             if (sceneProperty.value is JObject toJobject) {
-                                var convertedToFieldType = toJobject.ToObject(fieldInfo.FieldType);
+                                var jsonSerializer = CreateDefaultJsonSerializer();
+                                var convertedToFieldType = toJobject.ToObject(fieldInfo.FieldType, jsonSerializer);
                                 fieldInfo.SetValue(saveAble, convertedToFieldType);
                             } else {
                                 fieldInfo.SetValue(saveAble, sceneProperty.value);
@@ -96,7 +98,8 @@ namespace DBH.SaveSystem.Beans {
                         }
                     } else {
                         if (sceneProperty.value is JObject jObject) {
-                            var convertedToFieldType = jObject.ToObject(fieldInfo.FieldType);
+                            var jsonSerializer = CreateDefaultJsonSerializer();
+                            var convertedToFieldType = jObject.ToObject(fieldInfo.FieldType, jsonSerializer);
                             fieldInfo.SetValue(loadedAsset, convertedToFieldType);
                         } else {
                             fieldInfo.SetValue(loadedAsset,
@@ -124,17 +127,22 @@ namespace DBH.SaveSystem.Beans {
             fieldInfo.SetValue(toUpdate, childLoadedAsset);
         }
 
+        private static JsonSerializer CreateDefaultJsonSerializer() {
+            var jsonSerializerSettings = new JsonSerializerSettings {
+                Converters = { new ScriptableObjectJsonConverter(), new DecimalJsonConverter() },
+                DateTimeZoneHandling = DateTimeZoneHandling.Utc,
+                TypeNameHandling = TypeNameHandling.All,
+                ContractResolver = new FixedUnityTypeContractResolver()
+            };
+            return JsonSerializer.CreateDefault(jsonSerializerSettings);
+        }
+
         private static void UpdateListWithRaw(JArray jArray, FieldInfo fieldInfo, object toUpdate) {
             var collection = fieldInfo.GetValue(toUpdate) as IList;
             collection.Clear();
             var list = jArray.ToList();
+            var jsonSerializer = CreateDefaultJsonSerializer();
             foreach (var loadedSObject in list) {
-                var jsonSerializerSettings = new JsonSerializerSettings {
-                    Converters = { new ScriptableObjectJsonConverter() },
-                    // Other settings as required.
-                    DateTimeZoneHandling = DateTimeZoneHandling.Utc
-                };
-                var jsonSerializer = JsonSerializer.CreateDefault(jsonSerializerSettings);
                 collection.Add(loadedSObject.ToObject(fieldInfo.FieldType.GetGenericArguments()[0], jsonSerializer));
             }
         }

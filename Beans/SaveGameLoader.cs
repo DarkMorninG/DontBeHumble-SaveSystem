@@ -20,6 +20,7 @@ namespace DBH.SaveSystem.Beans {
     [Bean]
     public class SaveGameLoader {
         public void LoadSaveGame(SaveGame saveGame) {
+            if (saveGame.ActiveSceneSave() == null) return;
             var allGameObjects = Object.FindObjectsByType<GameObject>(FindObjectsSortMode.None);
             var savables = GetDBHMonosFromGameObjects(allGameObjects);
             UpdateProperties(saveGame, savables);

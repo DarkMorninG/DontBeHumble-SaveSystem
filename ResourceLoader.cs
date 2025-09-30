@@ -1,45 +1,54 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Newtonsoft.Json;
+using ResourceMapper;
 using UnityEngine;
+using UnityEngine.Windows;
 using Vault;
+using File = System.IO.File;
 using Object = UnityEngine.Object;
 
 namespace DBH.SaveSystem {
     public class ResourceLoader {
         private const string MappingFileName = "mappingFile";
-        private static List<string> ids;
+        private static Dictionary<string, List<ResourceDto>> resourceDtos;
 
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)]
         public static void UpdateResources() {
-            var load = Resources.Load<TextAsset>(MappingFileName);
-            ids = load.text
+            resourceDtos = Resources.Load<TextAsset>(MappingFileName)
+                .text
                 .Split(new[] { "\r\n", "\r", "\n" }, StringSplitOptions.None)
                 .Where(s => s.IsNotEmpty())
-                .ToList();
+                .ToDictionary(s => s.Split(";")[0], s => JsonConvert.DeserializeObject<List<ResourceDto>>(s.Split(";")[1]));
         }
 
 
         public static T LoadAssetWithId<T>(string id) where T : Object {
-            return Resources.Load<T>(RemoveFileEnding(id));
+            return Resources.Load<T>(RemoveFileEnding(resourceDtos[id].OrderBy(dto => dto.Count).First().Path));
         }
 
         public static List<T> LoadAllWithId<T>(List<string> guidList) where T : Object {
             return guidList
+                .Select(s => resourceDtos[s].OrderBy(dto => dto.Count).First().Path)
                 .Select(RemoveFileEnding)
                 .Select(Resources.Load<T>)
                 .ToList();
         }
 
         public static IEnumerable<T> LoadAll<T>() where T : Object {
-            return ids
+            return resourceDtos
+                .Select(pair => pair.Value.OrderBy(dto => dto.Count).First())
+                .Select(dto => dto.Path)
                 .Select(RemoveFileEnding)
                 .Select(Resources.Load<T>)
                 .Where(o => o != null);
         }
 
         public static string Id(ScriptableObject scriptableObject) {
-            var foundIds = ids.Where(s => s.EndsWith(scriptableObject.name + ".asset"))
+            var foundIds = resourceDtos
+                .Where(pair => pair.Value.OrderBy(dto => dto.Count).First().Path.EndsWith(scriptableObject.name + ".asset"))
+                .Select(pair => pair.Key)
                 .ToList();
             if (foundIds.Count == 1) {
                 return foundIds[0];

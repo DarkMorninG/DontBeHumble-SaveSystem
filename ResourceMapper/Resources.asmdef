@@ -1,7 +1,9 @@
 {
     "name": "Resources",
     "rootNamespace": "",
-    "references": [],
+    "references": [
+        "GUID:989f67bb5f55fe746b1421eed5919a1d"
+    ],
     "includePlatforms": [
         "Editor"
     ],

@@ -22,6 +22,7 @@ namespace ResourceMapper {
 
             var newAssets = importedAssets.Where(s => !s.EndsWith(MappingFileName))
                 .Where(s => s.StartsWith("Assets/Resources/"))
+                .Where(s => (File.GetAttributes(s) & FileAttributes.Directory) != FileAttributes.Directory)
                 .Where(s => loadResourceMap.Where(pair => pair.Value.Count == 1)
                     .All(pair => !pair.Value.Select(dto => dto.Path).Contains(RemoveResourcesPath(s))))
                 .Select(RemoveResourcesPath)

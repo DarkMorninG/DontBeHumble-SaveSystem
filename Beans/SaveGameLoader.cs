@@ -22,10 +22,12 @@ namespace DBH.SaveSystem.Beans {
         public void LoadSaveGame(SaveGame saveGame) {
             if (saveGame.ActiveSceneSave() == null) return;
             var allGameObjects = Object.FindObjectsByType<GameObject>(FindObjectsSortMode.None);
-            var savables = GetDBHMonosFromGameObjects(allGameObjects);
+            var savables = GetComponentFromGameObjects<ISaveable>(allGameObjects);
             UpdateProperties(saveGame, savables);
             UpdateScriptableObjects(saveGame.ScriptableObjectSaves);
+            var saveListener = GetComponentFromGameObjects<ISavingListener>(allGameObjects);
             savables.ForEach(saveAble => saveAble.AfterSaveGameLoad());
+            saveListener.ForEach(listener => listener.AfterSaveGameLoad());
 
             var saveAblePositionGameobjects = GameObject.FindGameObjectsWithTag("SaveAblePosition");
             UpdatePositions(saveGame.ActiveSceneSave(), saveAblePositionGameobjects.ToList());
@@ -169,10 +171,10 @@ namespace DBH.SaveSystem.Beans {
             }
         }
 
-        private List<ISaveable> GetDBHMonosFromGameObjects(IEnumerable<GameObject> gameObjectsInScene) {
-            var components = new List<ISaveable>();
+        private List<T> GetComponentFromGameObjects<T>(IEnumerable<GameObject> gameObjectsInScene) {
+            var components = new List<T>();
             foreach (var rootGameObject in gameObjectsInScene) {
-                foreach (var component in rootGameObject.GetComponents<ISaveable>()) {
+                foreach (var component in rootGameObject.GetComponents<T>()) {
                     components.AddNotNull(component);
                 }
             }

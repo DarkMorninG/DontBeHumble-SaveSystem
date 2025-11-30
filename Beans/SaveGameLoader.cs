@@ -119,13 +119,13 @@ namespace DBH.SaveSystem.Beans {
         private static void SetNumeric(FieldInfo fieldInfo, object toUpdate, object value) {
             switch (fieldInfo.FieldType) {
                 case Type t when t == typeof(double):
-                    fieldInfo.SetValue(Convert.ToSingle(toUpdate), value);
+                    fieldInfo.SetValue(toUpdate, Convert.ToSingle(value));
                     break;
                 case Type t when t == typeof(long):
-                    fieldInfo.SetValue(Convert.ToInt64(toUpdate), value);
+                    fieldInfo.SetValue(toUpdate, Convert.ToInt64(value));
                     break;
                 case Type t when t == typeof(int):
-                    fieldInfo.SetValue(Convert.ToInt32(toUpdate), value);
+                    fieldInfo.SetValue(toUpdate, Convert.ToInt32(value));
                     break;
             }
         }

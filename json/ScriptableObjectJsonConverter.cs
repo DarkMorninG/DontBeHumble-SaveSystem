@@ -23,7 +23,7 @@ namespace DBH.SaveSystem.json {
         }
 
         private static ScriptableObject LoadedAsset(string guid) {
-            return ResourceLoader.LoadAssetWithId<ScriptableObject>(guid);
+            return ResourceLoader.LoadAssetWithPath<ScriptableObject>(guid);
         }
     }
 }

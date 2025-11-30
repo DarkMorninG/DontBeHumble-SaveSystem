@@ -24,7 +24,7 @@ namespace DBH.SaveSystem {
         }
 
 
-        public static T LoadAssetWithId<T>(string id) where T : Object {
+        public static T LoadAssetWithPath<T>(string id) where T : Object {
             return Resources.Load<T>(RemoveFileEnding(resourceDtos[id].OrderBy(dto => dto.Count).First().Path));
         }
 
@@ -55,7 +55,8 @@ namespace DBH.SaveSystem {
             }
 
             foreach (var s in foundIds) {
-                var loadAssetWithId = LoadAssetWithId<ScriptableObject>(s);
+                var loadAssetWithId = LoadAssetWithPath<ScriptableObject>(s);
+                if (loadAssetWithId == null) continue;
                 if (loadAssetWithId.GetType() == scriptableObject.GetType()) {
                     return s;
                 }

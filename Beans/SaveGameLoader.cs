@@ -126,7 +126,7 @@ namespace DBH.SaveSystem.Beans {
         private static void UpdateWithScriptableObject(string guid,
             FieldInfo fieldInfo,
             object toUpdate) {
-            var childLoadedAsset = ResourceLoader.LoadAssetWithId<Object>(guid);
+            var childLoadedAsset = ResourceLoader.LoadAssetWithPath<Object>(guid);
             fieldInfo.SetValue(toUpdate, childLoadedAsset);
         }
 

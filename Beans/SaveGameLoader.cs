@@ -105,14 +105,35 @@ namespace DBH.SaveSystem.Beans {
                             var convertedToFieldType = jObject.ToObject(fieldInfo.FieldType, jsonSerializer);
                             fieldInfo.SetValue(loadedAsset, convertedToFieldType);
                         } else {
-                            fieldInfo.SetValue(loadedAsset,
-                                sceneProperty.value is double
-                                    ? Convert.ToSingle(sceneProperty.value)
-                                    : sceneProperty.value);
+                            if (IsNumeric(fieldInfo)) {
+                                SetNumeric(fieldInfo, loadedAsset, sceneProperty.value);
+                            } else {
+                                fieldInfo.SetValue(loadedAsset, sceneProperty.value);
+                            }
                         }
                     }
                 }
             }
+        }
+
+        private static void SetNumeric(FieldInfo fieldInfo, object toUpdate, object value) {
+            switch (fieldInfo.FieldType) {
+                case Type t when t == typeof(double):
+                    fieldInfo.SetValue(Convert.ToSingle(toUpdate), value);
+                    break;
+                case Type t when t == typeof(long):
+                    fieldInfo.SetValue(Convert.ToInt64(toUpdate), value);
+                    break;
+                case Type t when t == typeof(int):
+                    fieldInfo.SetValue(Convert.ToInt32(toUpdate), value);
+                    break;
+            }
+        }
+
+        private static bool IsNumeric(FieldInfo fieldInfo) {
+            return fieldInfo.FieldType == typeof(double) ||
+                   fieldInfo.FieldType == typeof(long) ||
+                   fieldInfo.FieldType == typeof(int);
         }
 
         private static bool IsScriptablObject(FieldInfo fieldInfo) {

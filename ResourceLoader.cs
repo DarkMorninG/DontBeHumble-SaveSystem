@@ -38,7 +38,7 @@ namespace DBH.SaveSystem {
 
         public static IEnumerable<T> LoadAll<T>() where T : Object {
             return resourceDtos
-                .Select(pair => pair.Value.OrderBy(dto => dto.Count).First())
+                .Select(pair => pair.Value.OrderBy(dto => dto.Count).Last())
                 .Select(dto => dto.Path)
                 .Select(RemoveFileEnding)
                 .Select(Resources.Load<T>)

@@ -25,12 +25,12 @@ namespace DBH.SaveSystem {
 
 
         public static T LoadAssetWithPath<T>(string id) where T : Object {
-            return Resources.Load<T>(RemoveFileEnding(resourceDtos[id].OrderBy(dto => dto.Count).First().Path));
+            return Resources.Load<T>(RemoveFileEnding(resourceDtos[id].OrderBy(dto => dto.Count).Last().Path));
         }
 
         public static List<T> LoadAllWithId<T>(List<string> guidList) where T : Object {
             return guidList
-                .Select(s => resourceDtos[s].OrderBy(dto => dto.Count).First().Path)
+                .Select(s => resourceDtos[s].OrderBy(dto => dto.Count).Last().Path)
                 .Select(RemoveFileEnding)
                 .Select(Resources.Load<T>)
                 .ToList();
@@ -47,7 +47,7 @@ namespace DBH.SaveSystem {
 
         public static string Id(ScriptableObject scriptableObject) {
             var foundIds = resourceDtos
-                .Where(pair => pair.Value.OrderBy(dto => dto.Count).First().Path.EndsWith(scriptableObject.name + ".asset"))
+                .Where(pair => pair.Value.OrderBy(dto => dto.Count).Last().Path.EndsWith(scriptableObject.name + ".asset"))
                 .Select(pair => pair.Key)
                 .ToList();
             if (foundIds.Count == 1) {

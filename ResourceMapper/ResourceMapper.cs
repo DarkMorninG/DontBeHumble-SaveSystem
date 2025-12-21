@@ -37,7 +37,7 @@ namespace ResourceMapper {
                 var updatedResourceMap = loadResourceMap
                     .Where(pair => pair.Value.Select(dto => dto.Path).Contains(RemoveResourcesPath(movedFromAssetPaths[i])))
                     .Select(pair => {
-                        var resourceDto = pair.Value.OrderBy(dto => dto.Count).First().CreateNewVersion(RemoveResourcesPath(movedAssets[i]));
+                        var resourceDto = pair.Value.OrderBy(dto => dto.Count).Last().CreateNewVersion(RemoveResourcesPath(movedAssets[i]));
                         pair.Value.Add(resourceDto);
                         return pair;
                     })

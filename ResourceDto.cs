@@ -1,5 +1,5 @@
 ﻿using System;
-using UnityEngine;
+using Newtonsoft.Json;
 
 namespace ResourceMapper {
     [Serializable]
@@ -11,11 +11,13 @@ namespace ResourceMapper {
 
         public long Count => count;
 
+        
         public ResourceDto(string path) {
             this.path = path;
             count = 0;
         }
 
+        [JsonConstructor]
         private ResourceDto(string path, long count) {
             this.path = path;
             this.count = count;

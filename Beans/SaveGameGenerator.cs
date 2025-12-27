@@ -31,7 +31,9 @@ namespace DBH.SaveSystem.Beans {
         }
 
         public SaveGame Create(int order, string stateName, string sceneName) {
-            return new SaveGame(order, stateName, sceneName);
+            var saveGame = new SaveGame(order, stateName, sceneName);
+            Update(saveGame, stateName, Lists.Empty<string>(), sceneName);
+            return saveGame;
         }
 
         private List<GameObjectPositionSave> GetAllGameObjectPositionSaves() {

@@ -59,7 +59,7 @@ namespace DBH.SaveSystem {
                 .OrderBy(i => i)
                 .LastOptional()
                 .OrElse(0);
-            var saveGame = _saveGameGenerator.Create(highestOrder + 1, "newGame", "Complete City");
+            var saveGame = _saveGameGenerator.Create(highestOrder + 1, stateReference(), SceneManager.GetActiveScene().name);
             var writeSaveGame = _saveGameWriterReader.WriteSaveGame(saveGame);
             saveGames.ReplaceOrAdd(await writeSaveGame);
             currentSaveGame = saveGame;

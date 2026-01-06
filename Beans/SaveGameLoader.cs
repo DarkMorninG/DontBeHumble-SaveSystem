@@ -26,11 +26,16 @@ namespace DBH.SaveSystem.Beans {
             UpdateProperties(saveGame, savables);
             UpdateScriptableObjects(saveGame.ScriptableObjectSaves);
             var saveListener = GetComponentFromGameObjects<ISavingListener>(allGameObjects);
-            savables.ForEach(saveAble => saveAble.AfterSaveGameLoad());
-            saveListener.ForEach(listener => listener.AfterSaveGameLoad());
-
             var saveAblePositionGameobjects = GameObject.FindGameObjectsWithTag("SaveAblePosition");
             UpdatePositions(saveGame.ActiveSceneSave(), saveAblePositionGameobjects.ToList());
+            
+            savables.ForEach(saveAble => saveAble.AfterSaveGameLoad());
+            saveListener.ForEach(listener => listener.AfterSaveGameLoad());
+            ResourceLoader.LoadAll<ScriptableObject>()
+                .Where(o => o is ISavingListener)
+                .Cast<ISavingListener>()
+                .ToList()
+                .ForEach(listener => listener.AfterSaveGameLoad());
         }
 
 

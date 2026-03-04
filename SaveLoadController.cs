@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using BetterCoroutine.AwaitRuntime;
 using DBH.Attributes;
 using DBH.Base;
 using DBH.SaveSystem.Beans;
@@ -11,6 +12,7 @@ using Sirenix.OdinInspector;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using Vault;
+using Vault.BetterCoroutine;
 
 namespace DBH.SaveSystem {
     [Controller]
@@ -27,6 +29,11 @@ namespace DBH.SaveSystem {
         [Grab]
         private SaveGameWriterReader _saveGameWriterReader;
 
+        [SerializeField]
+        private bool enableAutoSaving = true;
+
+        [SerializeField]
+        private float autoSavingInterval = 10;
 
         [SerializeField]
         private SaveGame currentSaveGame;
@@ -47,6 +54,7 @@ namespace DBH.SaveSystem {
         public event BeforeSaveGameUpdate OnBeforeSaveGameUpdate;
 
         public event SaveGamesUpdated OnSaveGameUpdated;
+        private IAwaitRuntime autoSaving;
 
         [ContextMenu("Load Save Games")]
         private void Start() {
@@ -80,7 +88,6 @@ namespace DBH.SaveSystem {
             saveGames.ReplaceOrAdd(await writeSaveGame);
         }
 
-
         [ContextMenu("Update SaveGame")]
         public async Task UpdateSaveFile(string sceneName) {
             // currentSaveGame.SaveGameIcon = _screenShotter.LastScreenshot;
@@ -107,6 +114,15 @@ namespace DBH.SaveSystem {
             _gameplayTimer.StartGameplayTimer();
             currentSaveGame = saveGame;
             _saveGameLoader.LoadSaveGame(currentSaveGame);
+            autoSaving = IAwaitRuntime.EverySecondsDo(() => {
+                if (currentSaveGame != null) {
+                    UpdateSaveFile();
+                }
+            }, () => autoSavingInterval);
+        }
+
+        private void OnDisable() {
+            autoSaving.Stop();
         }
 
         [ContextMenu("Create And Update")]

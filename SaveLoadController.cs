@@ -114,11 +114,14 @@ namespace DBH.SaveSystem {
             _gameplayTimer.StartGameplayTimer();
             currentSaveGame = saveGame;
             _saveGameLoader.LoadSaveGame(currentSaveGame);
-            autoSaving = IAwaitRuntime.EverySecondsDo(() => {
-                if (currentSaveGame != null) {
-                    UpdateSaveFile();
-                }
-            }, () => autoSavingInterval);
+            if (enableAutoSaving) {
+                autoSaving = IAwaitRuntime.EverySecondsDo(() => {
+                        if (currentSaveGame != null) {
+                            UpdateSaveFile();
+                        }
+                    },
+                    () => autoSavingInterval);
+            }
         }
 
         private void OnDisable() {

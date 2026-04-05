@@ -1,7 +1,8 @@
-﻿
+﻿using DBH.SaveSystem.dto;
+
 namespace DBH.SaveSystem.writer {
     public interface IVersionUpdate {
-        dto.SemVer VersionToUpdate { get; }
+        SemVer VersionToUpdate { get; }
 
         void UpdateCustomTypes(SaveGameUpdateBuilder builder);
     }

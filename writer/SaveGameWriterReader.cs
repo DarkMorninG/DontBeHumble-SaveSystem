@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
-using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using DBH.Attributes;
 using DBH.SaveSystem.dto;
@@ -30,6 +29,7 @@ namespace DBH.SaveSystem.writer {
                 ContractResolver = fixedUnityTypeContractResolver,
                 TypeNameHandling = TypeNameHandling.All
             };
+            saveGame.VersionSaved = Application.version;
             var saveGameString = JsonConvert.SerializeObject(saveGame, Formatting.Indented, jsonSerializerSettings);
             await File.WriteAllTextAsync(SaveGameFile(saveGame.Order), saveGameString);
             return saveGame;

@@ -24,6 +24,8 @@ namespace DBH.SaveSystem.dto {
         [SerializeField]
         private List<string> phases;
 
+        [SerializeField]
+        private string versionSaved;
 
         [FormerlySerializedAs("saveTime")]
         [SerializeField]
@@ -38,12 +40,13 @@ namespace DBH.SaveSystem.dto {
         [SerializeField]
         private List<SObjectPropertySave> scriptableObjectSaves = new();
 
-        public SaveGame(int order, string stateName, string sceneName) {
+        public SaveGame(int order, string stateName, string sceneName, string version) {
             this.order = order;
             this.stateName = stateName;
             this.sceneName = sceneName;
             creationDate = DateTime.Now;
             lastModified = DateTime.Now;
+            versionSaved = version;
         }
 
         public string StateName {
@@ -59,6 +62,11 @@ namespace DBH.SaveSystem.dto {
         public DateTime CreationDate {
             get => creationDate;
             set => creationDate = value;
+        }
+
+        public string VersionSaved {
+            get => versionSaved;
+            set => versionSaved = value;
         }
 
         public Texture2D SaveGameIcon {

@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace DBH.SaveSystem.dto {
+namespace DBH.SaveSystem.writer {
     [Serializable]
     public class SemVer : IComparable<SemVer> {
         public int Major { get; }

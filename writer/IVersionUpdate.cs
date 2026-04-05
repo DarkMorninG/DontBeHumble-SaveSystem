@@ -1,5 +1,4 @@
-﻿using DBH.SaveSystem.dto;
-
+﻿
 namespace DBH.SaveSystem.writer {
     public interface IVersionUpdate {
         SemVer VersionToUpdate { get; }

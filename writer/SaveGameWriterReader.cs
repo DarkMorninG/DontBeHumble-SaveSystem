@@ -56,7 +56,7 @@ namespace DBH.SaveSystem.writer {
             };
             var versionSaved = ExtractVersionSaved(saveGameRaw);
             var updates = versionUpdates.OrderBy(update => update.VersionToUpdate)
-                .Where(update => update.VersionToUpdate > new SemanticVersion(versionSaved))
+                .Where(update => update.VersionToUpdate > new SemVer(versionSaved))
                 .ToList();
 
             var oldRaw = saveGameRaw;

@@ -3,14 +3,14 @@ using System.Collections.Generic;
 
 namespace DBH.SaveSystem.dto {
     [Serializable]
-    public class SemanticVersion : IComparable<SemanticVersion> {
+    public class SemVer : IComparable<SemVer> {
         public int Major { get; }
         public int Minor { get; }
         public int Patch { get; }
         public string PreRelease { get; }
         public string BuildMetadata { get; }
 
-        public SemanticVersion(string version) {
+        public SemVer(string version) {
             Major = 0;
             Minor = 0;
             Patch = 0;
@@ -51,7 +51,7 @@ namespace DBH.SaveSystem.dto {
             }
         }
 
-        public SemanticVersion(int major, int minor, int patch, string preRelease = "", string buildMetadata = "") {
+        public SemVer(int major, int minor, int patch, string preRelease = "", string buildMetadata = "") {
             Major = major;
             Minor = minor;
             Patch = patch;
@@ -70,7 +70,7 @@ namespace DBH.SaveSystem.dto {
             return version;
         }
 
-        public int CompareTo(SemanticVersion other) {
+        public int CompareTo(SemVer other) {
             if (ReferenceEquals(this, other)) return 0;
             if (ReferenceEquals(null, other)) return 1;
             
@@ -92,7 +92,7 @@ namespace DBH.SaveSystem.dto {
             return string.Compare(PreRelease, other.PreRelease, StringComparison.Ordinal);
         }
 
-        protected bool Equals(SemanticVersion other) {
+        protected bool Equals(SemVer other) {
             return Major == other.Major && 
                    Minor == other.Minor && 
                    Patch == other.Patch && 
@@ -104,7 +104,7 @@ namespace DBH.SaveSystem.dto {
             if (ReferenceEquals(null, obj)) return false;
             if (ReferenceEquals(this, obj)) return true;
             if (obj.GetType() != this.GetType()) return false;
-            return Equals((SemanticVersion)obj);
+            return Equals((SemVer)obj);
         }
 
         public override int GetHashCode() {
@@ -118,28 +118,28 @@ namespace DBH.SaveSystem.dto {
             }
         }
 
-        public static bool operator ==(SemanticVersion left, SemanticVersion right) {
+        public static bool operator ==(SemVer left, SemVer right) {
             return Equals(left, right);
         }
 
-        public static bool operator !=(SemanticVersion left, SemanticVersion right) {
+        public static bool operator !=(SemVer left, SemVer right) {
             return !Equals(left, right);
         }
 
-        public static bool operator <(SemanticVersion left, SemanticVersion right) {
-            return Comparer<SemanticVersion>.Default.Compare(left, right) < 0;
+        public static bool operator <(SemVer left, SemVer right) {
+            return Comparer<SemVer>.Default.Compare(left, right) < 0;
         }
 
-        public static bool operator >(SemanticVersion left, SemanticVersion right) {
-            return Comparer<SemanticVersion>.Default.Compare(left, right) > 0;
+        public static bool operator >(SemVer left, SemVer right) {
+            return Comparer<SemVer>.Default.Compare(left, right) > 0;
         }
 
-        public static bool operator <=(SemanticVersion left, SemanticVersion right) {
-            return Comparer<SemanticVersion>.Default.Compare(left, right) <= 0;
+        public static bool operator <=(SemVer left, SemVer right) {
+            return Comparer<SemVer>.Default.Compare(left, right) <= 0;
         }
 
-        public static bool operator >=(SemanticVersion left, SemanticVersion right) {
-            return Comparer<SemanticVersion>.Default.Compare(left, right) >= 0;
+        public static bool operator >=(SemVer left, SemVer right) {
+            return Comparer<SemVer>.Default.Compare(left, right) >= 0;
         }
     }
 }

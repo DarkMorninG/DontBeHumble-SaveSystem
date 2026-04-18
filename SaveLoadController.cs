@@ -125,7 +125,7 @@ namespace DBH.SaveSystem {
         }
 
         private void OnDisable() {
-            autoSaving.Stop();
+            autoSaving?.Stop();
         }
 
         [ContextMenu("Create And Update")]

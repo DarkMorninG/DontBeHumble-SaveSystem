@@ -5,8 +5,14 @@ using UnityEngine;
 
 namespace DBH.SaveSystem.json {
     public class ScriptableObjectJsonConverter : JsonConverter<ScriptableObject> {
-        public override void WriteJson(JsonWriter writer, ScriptableObject value, JsonSerializer serializer) {
-            writer.WriteValue(GetAssetGuidByObject(value));
+        public override async void WriteJson(JsonWriter writer, ScriptableObject value, JsonSerializer serializer) {
+            try {
+                var assetGuidByObject = await GetAssetGuidByObject(value);
+                await writer.WriteValueAsync(assetGuidByObject);
+            }
+            catch (System.Exception e) {
+                Debug.LogException(e);
+            }
         }
 
         public override ScriptableObject ReadJson(JsonReader reader,
@@ -22,7 +28,7 @@ namespace DBH.SaveSystem.json {
         private static async Task<string> GetAssetGuidByObject(ScriptableObject scriptableObject) {
             await Awaitable.MainThreadAsync();
             var id = ResourceLoader.Id(scriptableObject);
-            await Awaitable.MainThreadAsync();
+            await Awaitable.BackgroundThreadAsync();
             return id;
         }
 

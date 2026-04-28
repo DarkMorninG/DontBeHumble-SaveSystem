@@ -29,7 +29,7 @@ namespace DBH.SaveSystem.writer {
                 ContractResolver = fixedUnityTypeContractResolver,
                 TypeNameHandling = TypeNameHandling.All
             };
-            saveGame.VersionSaved = Application.version;
+            saveGame.VersionSaved = version;
             var saveGameString = JsonConvert.SerializeObject(saveGame, Formatting.Indented, jsonSerializerSettings);
             await File.WriteAllTextAsync(SaveGameFile(saveGame.Order), saveGameString);
             return saveGame;

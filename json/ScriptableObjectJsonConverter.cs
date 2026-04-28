@@ -5,10 +5,10 @@ using UnityEngine;
 
 namespace DBH.SaveSystem.json {
     public class ScriptableObjectJsonConverter : JsonConverter<ScriptableObject> {
-        public override async void WriteJson(JsonWriter writer, ScriptableObject value, JsonSerializer serializer) {
+        public override void WriteJson(JsonWriter writer, ScriptableObject value, JsonSerializer serializer) {
             try {
-                var assetGuidByObject = await GetAssetGuidByObject(value);
-                await writer.WriteValueAsync(assetGuidByObject);
+                var assetGuidByObject = GetAssetGuidByObject(value).Result;
+                writer.WriteValue(assetGuidByObject);
             }
             catch (System.Exception e) {
                 Debug.LogException(e);

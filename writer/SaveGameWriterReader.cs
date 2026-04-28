@@ -22,7 +22,7 @@ namespace DBH.SaveSystem.writer {
             this.versionUpdates = versionUpdates;
         }
 
-        public async Task<SaveGame> WriteSaveGame(SaveGame saveGame) {
+        public async Task<SaveGame> WriteSaveGame(SaveGame saveGame, string version) {
             var fixedUnityTypeContractResolver = new FixedUnityTypeContractResolver();
             var jsonSerializerSettings = new JsonSerializerSettings {
                 Converters = { new ScriptableObjectJsonConverter(), new DecimalJsonConverter() },

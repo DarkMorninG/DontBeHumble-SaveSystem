@@ -68,7 +68,9 @@ namespace DBH.SaveSystem {
                 .LastOptional()
                 .OrElse(0);
             var saveGame = _saveGameGenerator.Create(highestOrder + 1, stateReference(), SceneManager.GetActiveScene().name);
-            var writeSaveGame = await _saveGameWriterReader.WriteSaveGame(saveGame);
+            var version = Application.version;
+            await Awaitable.BackgroundThreadAsync();
+            var writeSaveGame = await _saveGameWriterReader.WriteSaveGame(saveGame, version);
             saveGames.ReplaceOrAdd(writeSaveGame);
             currentSaveGame = saveGame;
             return saveGame;
@@ -84,8 +86,9 @@ namespace DBH.SaveSystem {
                 stateReference(),
                 phaseReference(),
                 SceneManager.GetActiveScene().name);
+            var version = Application.version;
             await Awaitable.BackgroundThreadAsync();
-            var writeSaveGame = await _saveGameWriterReader.WriteSaveGame(currentSaveGame);
+            var writeSaveGame = await _saveGameWriterReader.WriteSaveGame(currentSaveGame, version);
             saveGames.ReplaceOrAdd(writeSaveGame);
         }
 
@@ -99,8 +102,9 @@ namespace DBH.SaveSystem {
                 stateReference(),
                 phaseReference(),
                 sceneName);
+            var version = Application.version;
             await Awaitable.BackgroundThreadAsync();
-            var writeSaveGame = await _saveGameWriterReader.WriteSaveGame(currentSaveGame);
+            var writeSaveGame = await _saveGameWriterReader.WriteSaveGame(currentSaveGame, version);
             saveGames.ReplaceOrAdd(writeSaveGame);
         }
 

@@ -1,4 +1,5 @@
 using System;
+using System.Threading.Tasks;
 using Newtonsoft.Json;
 using UnityEngine;
 
@@ -18,8 +19,11 @@ namespace DBH.SaveSystem.json {
         }
 
 
-        private static string GetAssetGuidByObject(ScriptableObject scriptableObject) {
-            return ResourceLoader.Id(scriptableObject);
+        private static async Task<string> GetAssetGuidByObject(ScriptableObject scriptableObject) {
+            await Awaitable.MainThreadAsync();
+            var id = ResourceLoader.Id(scriptableObject);
+            await Awaitable.MainThreadAsync();
+            return id;
         }
 
         private static ScriptableObject LoadedAsset(string guid) {

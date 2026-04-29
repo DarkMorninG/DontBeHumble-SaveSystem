@@ -11,18 +11,12 @@ namespace DBH.SaveSystem.dto {
         private SaveAbleScriptableObject objectRef;
 
         [SerializeField]
-        private Type type;
-
-        [SerializeField]
         public List<SceneProperty> sceneProperties = new List<SceneProperty>();
-
-        public Type Type => type;
 
         public SaveAbleScriptableObject ObjectRef => objectRef;
 
         public SObjectPropertySave(SaveAbleScriptableObject objectRef) {
             this.objectRef = objectRef;
-            type = objectRef.GetType();
         }
 
         public void AddSceneProperties(string propertyName, object value) {

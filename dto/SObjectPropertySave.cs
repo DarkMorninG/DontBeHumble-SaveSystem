@@ -6,9 +6,6 @@ using UnityEngine.Serialization;
 namespace DBH.SaveSystem.dto {
     [Serializable]
     public class SObjectPropertySave {
-        [SerializeField]
-        private string identifier;
-
         [FormerlySerializedAs("guid")]
         [SerializeField]
         private SaveAbleScriptableObject objectRef;
@@ -19,24 +16,13 @@ namespace DBH.SaveSystem.dto {
         [SerializeField]
         public List<SceneProperty> sceneProperties = new List<SceneProperty>();
 
-        public Type Type {
-            get => type;
-            set => type = value;
-        }
+        public Type Type => type;
 
-        public string Identifier {
-            get => identifier;
-            set => identifier = value;
-        }
+        public SaveAbleScriptableObject ObjectRef => objectRef;
 
-        public SaveAbleScriptableObject ObjectRef {
-            get => objectRef;
-            set => objectRef = value;
-        }
-
-        public SObjectPropertySave(string identifier, SaveAbleScriptableObject objectRef) {
-            this.identifier = identifier;
+        public SObjectPropertySave(SaveAbleScriptableObject objectRef) {
             this.objectRef = objectRef;
+            type = objectRef.GetType();
         }
 
         public void AddSceneProperties(string propertyName, object value) {
@@ -47,6 +33,7 @@ namespace DBH.SaveSystem.dto {
         public class SceneProperty {
             [SerializeField]
             public string PropertyName;
+
             [SerializeField]
             public object value;
 

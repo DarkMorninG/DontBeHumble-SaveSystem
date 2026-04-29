@@ -73,8 +73,7 @@ namespace DBH.SaveSystem.Beans {
                 var fieldsWithAttribute = Injector.GetFieldsWithAttribute<PlayerSaved>(scriptableObject);
                 if (fieldsWithAttribute.IsEmpty()) continue;
 
-                var componentPropertySave = new SObjectPropertySave(scriptableObject.Identifier, scriptableObject);
-                componentPropertySave.Type = scriptableObject.GetType();
+                var componentPropertySave = new SObjectPropertySave(scriptableObject);
                 foreach (var fieldInfo in fieldsWithAttribute) {
                     var value = fieldInfo.GetValue(scriptableObject);
                     if (IsDefault(value)) continue;

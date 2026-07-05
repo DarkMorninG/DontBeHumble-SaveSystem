@@ -123,16 +123,16 @@ namespace DBH.SaveSystem.Beans {
             try {
                 switch (fieldInfo.FieldType) {
                     case { } t when t == typeof(int):
-                        fieldInfo.SetValue(fieldInfo, Convert.ToInt32(t));
+                        fieldInfo.SetValue(loadedAsset, Convert.ToInt32(t));
                         break;
                     case { } t when t == typeof(long):
-                        fieldInfo.SetValue(fieldInfo, Convert.ToInt64(t));
+                        fieldInfo.SetValue(loadedAsset, Convert.ToInt64(t));
                         break;
                     case { } t when t == typeof(double):
-                        fieldInfo.SetValue(fieldInfo, Convert.ToDouble(t));
+                        fieldInfo.SetValue(loadedAsset, Convert.ToDouble(t));
                         break;
                     case { } t when t == typeof(float):
-                        fieldInfo.SetValue(fieldInfo, Convert.ToSingle(t));
+                        fieldInfo.SetValue(loadedAsset, Convert.ToSingle(t));
                         break;
                     case { IsEnum: true }:
                         fieldInfo.SetValue(loadedAsset, Enum.Parse(fieldInfo.FieldType, sceneProperty.value as string));

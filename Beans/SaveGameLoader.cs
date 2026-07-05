@@ -151,7 +151,7 @@ namespace DBH.SaveSystem.Beans {
             catch (System.Exception ex) {
                 Debug.LogError(
                     $"failed to convert sceneProperty: {sceneProperty.PropertyName} for value {sceneProperty.value}, for field in {fieldInfo.Name} in object {loadedAsset.name}");
-                throw ex;
+                throw;
             }
         }
 

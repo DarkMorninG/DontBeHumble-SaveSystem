@@ -28,7 +28,7 @@ namespace DBH.SaveSystem.Beans {
             var saveListener = GetComponentFromGameObjects<ISavingListener>(allGameObjects);
             var saveAblePositionGameobjects = GameObject.FindGameObjectsWithTag("SaveAblePosition");
             UpdatePositions(saveGame.ActiveSceneSave(), saveAblePositionGameobjects.ToList());
-            
+
             savables.ForEach(saveAble => saveAble.AfterSaveGameLoad());
             saveListener.ForEach(listener => listener.AfterSaveGameLoad());
             ResourceLoader.LoadAll<ScriptableObject>()
@@ -110,36 +110,44 @@ namespace DBH.SaveSystem.Beans {
                             var convertedToFieldType = jObject.ToObject(fieldInfo.FieldType, jsonSerializer);
                             fieldInfo.SetValue(loadedAsset, convertedToFieldType);
                         } else {
-                            if (IsNumeric(fieldInfo)) {
-                                SetNumeric(fieldInfo, loadedAsset, sceneProperty.value);
-                            } else {
-                                fieldInfo.SetValue(loadedAsset, sceneProperty.value);
-                            }
+                            SetPrimitives(fieldInfo, loadedAsset, sceneProperty);
                         }
                     }
                 }
             }
         }
 
-        private static void SetNumeric(FieldInfo fieldInfo, object toUpdate, object value) {
+        private static void SetPrimitives(FieldInfo fieldInfo,
+            SaveAbleScriptableObject loadedAsset,
+            SObjectPropertySave.SceneProperty sceneProperty) {
             switch (fieldInfo.FieldType) {
-                case Type t when t == typeof(double):
-                    fieldInfo.SetValue(toUpdate, Convert.ToSingle(value));
+                case { } t when t == typeof(int):
+                    fieldInfo.SetValue(fieldInfo, Convert.ToInt32(t));
                     break;
-                case Type t when t == typeof(long):
-                    fieldInfo.SetValue(toUpdate, Convert.ToInt64(value));
+                case { } t when t == typeof(long):
+                    fieldInfo.SetValue(fieldInfo, Convert.ToInt64(t));
                     break;
-                case Type t when t == typeof(int):
-                    fieldInfo.SetValue(toUpdate, Convert.ToInt32(value));
+                case { } t when t == typeof(double):
+                    fieldInfo.SetValue(fieldInfo, Convert.ToDouble(t));
+                    break;
+                case { } t when t == typeof(float):
+                    fieldInfo.SetValue(fieldInfo, Convert.ToSingle(t));
+                    break;
+                case { IsEnum: true }:
+                    fieldInfo.SetValue(loadedAsset, Enum.Parse(fieldInfo.FieldType, sceneProperty.value as string));
+                    break;
+                case { } t when t == typeof(bool):
+                    fieldInfo.SetValue(loadedAsset, Convert.ToBoolean(t));
+                    break;
+                case { } t when t == typeof(string):
+                    fieldInfo.SetValue(loadedAsset, sceneProperty.value as string);
+                    break;
+                case { } t when t == typeof(char):
+                    fieldInfo.SetValue(loadedAsset, Convert.ToChar(sceneProperty.value));
                     break;
             }
         }
 
-        private static bool IsNumeric(FieldInfo fieldInfo) {
-            return fieldInfo.FieldType == typeof(double) ||
-                   fieldInfo.FieldType == typeof(long) ||
-                   fieldInfo.FieldType == typeof(int);
-        }
 
         private static bool IsScriptablObject(FieldInfo fieldInfo) {
             return fieldInfo.FieldType.GetBaseTypes().Contains(typeof(ScriptableObject));

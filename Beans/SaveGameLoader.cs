@@ -120,30 +120,33 @@ namespace DBH.SaveSystem.Beans {
         private static void SetPrimitives(FieldInfo fieldInfo,
             SaveAbleScriptableObject loadedAsset,
             SObjectPropertySave.SceneProperty sceneProperty) {
+            if (sceneProperty.value == null) {
+                fieldInfo.SetValue(loadedAsset, null);
+            }
             try {
                 switch (fieldInfo.FieldType) {
-                    case { } t when t == typeof(int):
-                        fieldInfo.SetValue(loadedAsset, Convert.ToInt32(t));
+                    case Type t when t == typeof(int):
+                        fieldInfo.SetValue(loadedAsset, Convert.ToInt32(sceneProperty.value));
                         break;
-                    case { } t when t == typeof(long):
-                        fieldInfo.SetValue(loadedAsset, Convert.ToInt64(t));
+                    case Type t when t == typeof(long):
+                        fieldInfo.SetValue(loadedAsset, Convert.ToInt64(sceneProperty.value));
                         break;
-                    case { } t when t == typeof(double):
-                        fieldInfo.SetValue(loadedAsset, Convert.ToDouble(t));
+                    case Type t when t == typeof(double):
+                        fieldInfo.SetValue(loadedAsset, Convert.ToDouble(sceneProperty.value));
                         break;
-                    case { } t when t == typeof(float):
-                        fieldInfo.SetValue(loadedAsset, Convert.ToSingle(t));
+                    case Type t when t == typeof(float):
+                        fieldInfo.SetValue(loadedAsset, Convert.ToSingle(sceneProperty.value));
                         break;
                     case { IsEnum: true }:
                         fieldInfo.SetValue(loadedAsset, Enum.Parse(fieldInfo.FieldType, sceneProperty.value as string));
                         break;
-                    case { } t when t == typeof(bool):
-                        fieldInfo.SetValue(loadedAsset, Convert.ToBoolean(t));
+                    case Type t when t == typeof(bool):
+                        fieldInfo.SetValue(loadedAsset, Convert.ToBoolean(sceneProperty.value));
                         break;
-                    case { } t when t == typeof(string):
+                    case Type t when t == typeof(string):
                         fieldInfo.SetValue(loadedAsset, sceneProperty.value as string);
                         break;
-                    case { } t when t == typeof(char):
+                    case Type t when t == typeof(char):
                         fieldInfo.SetValue(loadedAsset, Convert.ToChar(sceneProperty.value));
                         break;
                 }

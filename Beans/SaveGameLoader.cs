@@ -120,31 +120,38 @@ namespace DBH.SaveSystem.Beans {
         private static void SetPrimitives(FieldInfo fieldInfo,
             SaveAbleScriptableObject loadedAsset,
             SObjectPropertySave.SceneProperty sceneProperty) {
-            switch (fieldInfo.FieldType) {
-                case { } t when t == typeof(int):
-                    fieldInfo.SetValue(fieldInfo, Convert.ToInt32(t));
-                    break;
-                case { } t when t == typeof(long):
-                    fieldInfo.SetValue(fieldInfo, Convert.ToInt64(t));
-                    break;
-                case { } t when t == typeof(double):
-                    fieldInfo.SetValue(fieldInfo, Convert.ToDouble(t));
-                    break;
-                case { } t when t == typeof(float):
-                    fieldInfo.SetValue(fieldInfo, Convert.ToSingle(t));
-                    break;
-                case { IsEnum: true }:
-                    fieldInfo.SetValue(loadedAsset, Enum.Parse(fieldInfo.FieldType, sceneProperty.value as string));
-                    break;
-                case { } t when t == typeof(bool):
-                    fieldInfo.SetValue(loadedAsset, Convert.ToBoolean(t));
-                    break;
-                case { } t when t == typeof(string):
-                    fieldInfo.SetValue(loadedAsset, sceneProperty.value as string);
-                    break;
-                case { } t when t == typeof(char):
-                    fieldInfo.SetValue(loadedAsset, Convert.ToChar(sceneProperty.value));
-                    break;
+            try {
+
+                switch (fieldInfo.FieldType) {
+                    case { } t when t == typeof(int):
+                        fieldInfo.SetValue(fieldInfo, Convert.ToInt32(t));
+                        break;
+                    case { } t when t == typeof(long):
+                        fieldInfo.SetValue(fieldInfo, Convert.ToInt64(t));
+                        break;
+                    case { } t when t == typeof(double):
+                        fieldInfo.SetValue(fieldInfo, Convert.ToDouble(t));
+                        break;
+                    case { } t when t == typeof(float):
+                        fieldInfo.SetValue(fieldInfo, Convert.ToSingle(t));
+                        break;
+                    case { IsEnum: true }:
+                        fieldInfo.SetValue(loadedAsset, Enum.Parse(fieldInfo.FieldType, sceneProperty.value as string));
+                        break;
+                    case { } t when t == typeof(bool):
+                        fieldInfo.SetValue(loadedAsset, Convert.ToBoolean(t));
+                        break;
+                    case { } t when t == typeof(string):
+                        fieldInfo.SetValue(loadedAsset, sceneProperty.value as string);
+                        break;
+                    case { } t when t == typeof(char):
+                        fieldInfo.SetValue(loadedAsset, Convert.ToChar(sceneProperty.value));
+                        break;
+                }
+            }
+            catch(System.Exception ex) {
+                Debug.LogError($"failed to convert sceneProperty: {sceneProperty.PropertyName} for value {sceneProperty.value}");
+                throw ex;
             }
         }
 

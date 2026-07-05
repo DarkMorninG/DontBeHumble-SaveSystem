@@ -121,7 +121,6 @@ namespace DBH.SaveSystem.Beans {
             SaveAbleScriptableObject loadedAsset,
             SObjectPropertySave.SceneProperty sceneProperty) {
             try {
-
                 switch (fieldInfo.FieldType) {
                     case { } t when t == typeof(int):
                         fieldInfo.SetValue(fieldInfo, Convert.ToInt32(t));
@@ -149,8 +148,9 @@ namespace DBH.SaveSystem.Beans {
                         break;
                 }
             }
-            catch(System.Exception ex) {
-                Debug.LogError($"failed to convert sceneProperty: {sceneProperty.PropertyName} for value {sceneProperty.value}");
+            catch (System.Exception ex) {
+                Debug.LogError(
+                    $"failed to convert sceneProperty: {sceneProperty.PropertyName} for value {sceneProperty.value}, for field in {fieldInfo.Name} in object {loadedAsset.name}");
                 throw ex;
             }
         }

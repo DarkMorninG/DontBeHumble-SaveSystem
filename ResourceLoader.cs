@@ -44,6 +44,17 @@ namespace DBH.SaveSystem {
                 .Select(Resources.Load<T>)
                 .Where(o => o != null);
         }
+        
+        public static IEnumerable<T> LoadAllInterface<T>() {
+            return resourceDtos
+                .Select(pair => pair.Value.OrderBy(dto => dto.Count).Last())
+                .Select(dto => dto.Path)
+                .Select(RemoveFileEnding)
+                .Select(Resources.Load<ScriptableObject>)
+                .Where(o => o is T)
+                .Where(o => o != null)
+                .Cast<T>();
+        }
 
         public static string Id(ScriptableObject scriptableObject) {
             var foundIds = resourceDtos

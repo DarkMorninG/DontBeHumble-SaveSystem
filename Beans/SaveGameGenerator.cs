@@ -23,7 +23,7 @@ namespace DBH.SaveSystem.Beans {
                 saveGame.SceneSaves.Add(save);
             }
 
-            saveGame.DisplayStats = ResourceLoader.LoadAllInterface<ICustomStatData>()
+            saveGame.DisplayStats = ResourceLoader.LoadAllInterface<IDisplaySaveStats>()
                 .OrderBy(dto => dto.Order)
                 .SelectMany(data => data.DisplayStats)
                 .Where(o => o != null)

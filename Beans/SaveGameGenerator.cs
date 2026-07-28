@@ -23,6 +23,12 @@ namespace DBH.SaveSystem.Beans {
                 saveGame.SceneSaves.Add(save);
             }
 
+            saveGame.DisplayStats = ResourceLoader.LoadAllInterface<ICustomStatData>()
+                .OrderBy(dto => dto.Order)
+                .SelectMany(data => data.DisplayStats)
+                .Where(o => o != null)
+                .ToList();
+
             saveGame.SceneName = currentScene;
             saveGame.ScriptableObjectSaves = GetAllScriptableSaveAbleProperties();
 

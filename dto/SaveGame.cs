@@ -27,6 +27,9 @@ namespace DBH.SaveSystem.dto {
         [SerializeField]
         private string versionSaved;
 
+        [SerializeField]
+        private List<CustomStatsDto> displayStats;
+
         [FormerlySerializedAs("saveTime")]
         [SerializeField]
         DateTime creationDate;
@@ -97,6 +100,11 @@ namespace DBH.SaveSystem.dto {
         public DateTime LastModified {
             get => lastModified;
             set => lastModified = value;
+        }
+
+        public List<CustomStatsDto> DisplayStats {
+            get => displayStats;
+            set => displayStats = value;
         }
 
         public List<SceneSave> SceneSaves => sceneSaves;

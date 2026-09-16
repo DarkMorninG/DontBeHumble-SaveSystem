@@ -1,9 +1,11 @@
 using System.Collections.Generic;
+using System.Dynamic;
 using System.Linq;
 using DBH.Attributes;
 using DBH.Injection;
 using DBH.SaveSystem.Attributes;
 using DBH.SaveSystem.dto;
+using DBH.SaveSystem.Extensions;
 using UnityEngine;
 using Vault;
 
@@ -12,6 +14,7 @@ namespace DBH.SaveSystem.Beans {
     public class SaveGameGenerator {
         public void Update(SaveGame saveGame, string stateName, List<string> phases, string currentScene) {
             var sceneSave = saveGame.SceneSaves.Find(save => save.Scenename.Equals(currentScene));
+
             if (sceneSave != null) {
                 sceneSave.GameObjectPositionSaves = GetAllGameObjectPositionSaves();
                 sceneSave.ComponentProperties = GetAllComponentSaveAbleProperties();
@@ -52,6 +55,7 @@ namespace DBH.SaveSystem.Beans {
 
         private List<ComponentPropertySave> GetAllComponentSaveAbleProperties() {
             var allGameObjects = Object.FindObjectsOfType<GameObject>();
+            allGameObjects.SelectMany(o => o.GetComponentsInChildren<IBeforeSaveListener>()).ForEach(listener => listener.BeforeSaving());
             var saveAbles = allGameObjects.SelectMany(o => o.GetComponentsInChildren<ISaveable>()).Distinct();
             var componentPropertySaves = new List<ComponentPropertySave>();
             foreach (var saveAble in saveAbles) {
@@ -72,8 +76,8 @@ namespace DBH.SaveSystem.Beans {
 
 
         private List<SObjectPropertySave> GetAllScriptableSaveAbleProperties() {
-            var foundSavableObjects = ResourceLoader.LoadAll<SaveAbleScriptableObject>();
-
+            var foundSavableObjects = ResourceLoader.LoadAll<SaveAbleScriptableObject>().ToList();
+            foundSavableObjects.ForEach(o => o.BeforeSaving());
             var componentPropertySaves = new List<SObjectPropertySave>();
             foreach (var scriptableObject in foundSavableObjects) {
                 var fieldsWithAttribute = Injector.GetFieldsWithAttribute<PlayerSaved>(scriptableObject);

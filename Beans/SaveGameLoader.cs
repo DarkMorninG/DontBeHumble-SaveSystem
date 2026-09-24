@@ -21,7 +21,7 @@ namespace DBH.SaveSystem.Beans {
     public class SaveGameLoader {
         public void LoadSaveGame(SaveGame saveGame) {
             if (saveGame.ActiveSceneSave() == null) return;
-            var allGameObjects = Object.FindObjectsByType<GameObject>(FindObjectsSortMode.None);
+            var allGameObjects = Object.FindObjectsByType<GameObject>(FindObjectsInactive.Include, FindObjectsSortMode.None);
             var savables = GetComponentFromGameObjects<ISaveable>(allGameObjects);
             UpdateProperties(saveGame, savables);
             UpdateScriptableObjects(saveGame.ScriptableObjectSaves);

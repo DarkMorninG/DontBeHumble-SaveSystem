@@ -49,8 +49,18 @@ namespace ResourceMapper {
             return allFileNames;
         }
 
-        private static string RemoveResourcesPath(string s) {
-            return s.Substring(s.IndexOf("/Resources/", StringComparison.Ordinal) + "/Resources/".Length);
+        private static string RemoveResourcesPath(string path) {
+            const string resourcesSegment = "/Resources/";
+
+            var normalizedPath = path.Replace('\\', '/');
+            var resourcesIndex = normalizedPath.IndexOf(
+                resourcesSegment,
+                StringComparison.OrdinalIgnoreCase);
+
+            if (resourcesIndex < 0)
+                throw new ArgumentException($"Path is not inside a Resources folder: {path}");
+
+            return normalizedPath.Substring(resourcesIndex + resourcesSegment.Length);
         }
 
         private static bool UpdateMovedAssets(Dictionary<string, List<ResourceDto>> resourceMap,

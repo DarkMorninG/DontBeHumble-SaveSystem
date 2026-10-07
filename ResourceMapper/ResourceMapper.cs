@@ -18,36 +18,13 @@ namespace ResourceMapper {
             string[] deletedAssets,
             string[] movedAssets,
             string[] movedFromAssetPaths) {
-            var loadResourceMap = CreateOrLoadResourceMap();
+            var resourceMap = CreateOrLoadResourceMap();
+            var movedAssetsChanged = UpdateMovedAssets(resourceMap, movedAssets, movedFromAssetPaths);
+            var importedAssetsChanged = AddImportedAssets(resourceMap, importedAssets);
 
-            var newAssets = importedAssets.Where(s => !s.EndsWith(MappingFileName))
-                .Where(s => s.StartsWith("Assets/Resources/"))
-                .Where(s => (File.GetAttributes(s) & FileAttributes.Directory) != FileAttributes.Directory)
-                .Where(s => loadResourceMap.All(pair => !pair.Value.Select(dto => dto.Path).Contains(RemoveResourcesPath(s))))
-                .Select(RemoveResourcesPath)
-                .Select(s => new ResourceDto(s))
-                .Select(dto => new List<ResourceDto> { dto })
-                .Select(JsonConvert.SerializeObject)
-                .Select(s => Guid.NewGuid() + ";" + s)
-                .ToList();
-            File.AppendAllLines(Application.dataPath + "/Resources/" + MappingFileName, newAssets);
+            ValidateCurrentPaths(resourceMap);
 
-            for (var i = 0; i < movedAssets.Length; i++) {
-                var updatedResourceMap = loadResourceMap
-                    .Where(pair => pair.Value.Select(dto => dto.Path).Contains(RemoveResourcesPath(movedFromAssetPaths[i])))
-                    .Select(pair => {
-                        var resourceDto = pair.Value.OrderBy(dto => dto.Count).Last().CreateNewVersion(RemoveResourcesPath(movedAssets[i]));
-                        pair.Value.Add(resourceDto);
-                        return pair;
-                    })
-                    .ToDictionary(pair => pair.Key, pair => pair.Value);
-                foreach (var keyValuePair in updatedResourceMap) {
-                    loadResourceMap[keyValuePair.Key] = keyValuePair.Value;
-                }
-
-                File.WriteAllLines(Application.dataPath + "/Resources/" + MappingFileName,
-                    loadResourceMap.Select(pair => pair.Key + ";" + JsonConvert.SerializeObject(pair.Value)));
-            }
+            if (movedAssetsChanged || importedAssetsChanged) WriteResourceMap(resourceMap);
         }
 
         public void OnPreprocessBuild(BuildReport report) {
@@ -76,7 +53,101 @@ namespace ResourceMapper {
             return s.Substring(s.IndexOf("/Resources/", StringComparison.Ordinal) + "/Resources/".Length);
         }
 
-        private static void UpdateResourceMap(string mappingFileName) {
+        private static bool UpdateMovedAssets(Dictionary<string, List<ResourceDto>> resourceMap,
+            string[] movedAssets, string[] movedFromAssetPaths) {
+            var mapChanged = false;
+
+            for (var i = 0; i < movedAssets.Length; i++) {
+                var oldPath = RemoveResourcesPath(movedFromAssetPaths[i]);
+                var newPath = RemoveResourcesPath(movedAssets[i]);
+                mapChanged |= UpdateMovedAsset(resourceMap, oldPath, newPath);
+            }
+
+            return mapChanged;
+        }
+
+        private static bool UpdateMovedAsset(Dictionary<string, List<ResourceDto>> resourceMap,
+            string oldPath, string newPath) {
+            var matchingEntries = resourceMap
+                .Where(pair => IsCurrentPath(pair, oldPath))
+                .ToList();
+
+            if (matchingEntries.Count > 1) {
+                Debug.LogError($"Resource path '{oldPath}' belongs to multiple mapping IDs. " +
+                               "The move cannot be applied unambiguously.");
+                return false;
+            }
+
+            if (matchingEntries.Count == 0) return false;
+
+            var entry = matchingEntries[0];
+            var current = Current(entry.Value);
+            if (PathsEqual(current.Path, newPath)) return false;
+
+            if (IsCurrentPathMapped(resourceMap, newPath, entry.Key)) {
+                Debug.LogError($"Cannot update resource mapping '{entry.Key}' from '{oldPath}' to " +
+                               $"'{newPath}': the destination is already mapped.");
+                return false;
+            }
+
+            entry.Value.Add(current.CreateNewVersion(newPath));
+            return true;
+        }
+
+        private static bool AddImportedAssets(Dictionary<string, List<ResourceDto>> resourceMap,
+            IEnumerable<string> importedAssets) {
+            var mapChanged = false;
+            var importedResourcePaths = importedAssets
+                .Where(s => !s.EndsWith(MappingFileName, StringComparison.OrdinalIgnoreCase))
+                .Where(s => s.StartsWith("Assets/Resources/", StringComparison.OrdinalIgnoreCase))
+                .Where(s => (File.GetAttributes(s) & FileAttributes.Directory) != FileAttributes.Directory)
+                .Select(RemoveResourcesPath)
+                .Distinct(StringComparer.OrdinalIgnoreCase);
+
+            foreach (var path in importedResourcePaths) {
+                if (IsCurrentPathMapped(resourceMap, path)) continue;
+
+                resourceMap.Add(Guid.NewGuid().ToString(), new List<ResourceDto> { new ResourceDto(path) });
+                mapChanged = true;
+            }
+
+            return mapChanged;
+        }
+
+        private static bool IsCurrentPathMapped(Dictionary<string, List<ResourceDto>> resourceMap,
+            string path, string excludedId = null) {
+            return resourceMap.Any(pair =>
+                pair.Key != excludedId &&
+                IsCurrentPath(pair, path));
+        }
+
+        private static bool IsCurrentPath(KeyValuePair<string, List<ResourceDto>> entry, string path) {
+            return entry.Value.Count > 0 && PathsEqual(Current(entry.Value).Path, path);
+        }
+
+        private static bool PathsEqual(string left, string right) {
+            return string.Equals(left, right, StringComparison.OrdinalIgnoreCase);
+        }
+
+        private static ResourceDto Current(IEnumerable<ResourceDto> versions) {
+            return versions.OrderBy(dto => dto.Count).Last();
+        }
+
+        private static void WriteResourceMap(Dictionary<string, List<ResourceDto>> resourceMap) {
+            File.WriteAllLines(Application.dataPath + "/Resources/" + MappingFileName,
+                resourceMap.Select(pair => pair.Key + ";" + JsonConvert.SerializeObject(pair.Value)));
+        }
+
+        private static void ValidateCurrentPaths(Dictionary<string, List<ResourceDto>> resourceMap) {
+            var duplicatePaths = resourceMap
+                .Where(pair => pair.Value.Count > 0)
+                .GroupBy(pair => Current(pair.Value).Path, StringComparer.OrdinalIgnoreCase)
+                .Where(group => group.Count() > 1);
+
+            foreach (var duplicate in duplicatePaths) {
+                Debug.LogError($"Resource path '{duplicate.Key}' belongs to multiple mapping IDs: " +
+                               string.Join(", ", duplicate.Select(pair => pair.Key)));
+            }
         }
     }
 }

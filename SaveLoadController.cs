@@ -7,6 +7,7 @@ using DBH.Attributes;
 using DBH.Base;
 using DBH.SaveSystem.Beans;
 using DBH.SaveSystem.dto;
+using DBH.SaveSystem.Extensions;
 using DBH.SaveSystem.writer;
 using Sirenix.OdinInspector;
 using UnityEngine;
@@ -28,6 +29,9 @@ namespace DBH.SaveSystem {
 
         [Grab]
         private SaveGameWriterReader _saveGameWriterReader;
+
+        [Grab]
+        private List<ISavingCondition> savingConditions;
 
         [SerializeField]
         private bool enableAutoSaving = true;
@@ -78,6 +82,7 @@ namespace DBH.SaveSystem {
 
         [ContextMenu("Update SaveGame")]
         public async void UpdateSaveFile() {
+            if (!savingConditions.All(condition => condition.CanSave())) return;
             // currentSaveGame.SaveGameIcon = _screenShotter.LastScreenshot;
             OnBeforeSaveGameUpdate?.Invoke();
             currentSaveGame.LastModified = DateTime.Now;
@@ -94,6 +99,7 @@ namespace DBH.SaveSystem {
 
         [ContextMenu("Update SaveGame")]
         public async Task UpdateSaveFile(string sceneName) {
+            if (!savingConditions.All(condition => condition.CanSave())) return;
             // currentSaveGame.SaveGameIcon = _screenShotter.LastScreenshot;
             OnBeforeSaveGameUpdate?.Invoke();
             currentSaveGame.LastModified = DateTime.Now;

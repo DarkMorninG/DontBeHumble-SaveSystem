@@ -57,6 +57,8 @@ namespace DBH.SaveSystem {
 
         public event BeforeSaveGameUpdate OnBeforeSaveGameUpdate;
 
+        public SaveGame CurrentSaveGame => currentSaveGame;
+
         public event SaveGamesUpdated OnSaveGameUpdated;
         private IAwaitRuntime autoSaving;
 

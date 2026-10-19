@@ -46,6 +46,7 @@ namespace DBH.SaveSystem.writer {
             return encryptedSaveFiles
                 .Select(File.ReadAllText)
                 .Select(RunVersionChanges)
+                .Where(game => game != null)
                 .ToList();
         }
 
@@ -68,7 +69,13 @@ namespace DBH.SaveSystem.writer {
                 oldRaw = jObject.ToString(Formatting.None);
             }
 
-            return JsonConvert.DeserializeObject<SaveGame>(oldRaw, jsonSerializerSettings);
+            try {
+                return JsonConvert.DeserializeObject<SaveGame>(oldRaw, jsonSerializerSettings);
+            }
+            catch {
+                Debug.LogError("could not parse savegame");
+                return null;
+            }
         }
 
         private static List<JObject> ExtractCustomTypeObjects(JObject root) {
